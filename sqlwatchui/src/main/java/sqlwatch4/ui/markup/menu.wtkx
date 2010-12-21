@@ -1,0 +1,53 @@
+<!--suppress XmlUnusedNamespaceDeclaration -->
+<MenuBar
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns:content="org.apache.pivot.wtk.content"
+        xmlns="org.apache.pivot.wtk">
+    <items>
+        <MenuBar.Item buttonData="Watch">
+            <menu>
+                <Menu>
+                    <sections>
+                        <Menu.Section>
+                            <Menu.Item>
+                                <buttonData>
+                                    <content:ButtonData text="Register Callback"/>
+                                </buttonData>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <buttonData>
+                                    <content:ButtonData text="List Callbacks"/>
+                                </buttonData>
+                            </Menu.Item>
+                        </Menu.Section>
+                    </sections>
+                </Menu>
+            </menu>
+        </MenuBar.Item>
+        <MenuBar.Item buttonData="Help">
+            <menu>
+                <Menu>
+                    <sections>
+                        <Menu.Section>
+                            <Menu.Item>
+                                <buttonData>
+                                    <content:MenuItemData text="Feedback"/>
+                                </buttonData>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <buttonData>
+                                    <content:MenuItemData text="Check for Updates"/>
+                                </buttonData>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <buttonData>
+                                    <content:MenuItemData text="About"/>
+                                </buttonData>
+                            </Menu.Item>
+                        </Menu.Section>
+                    </sections>
+                </Menu>
+            </menu>
+        </MenuBar.Item>
+    </items>
+</MenuBar>

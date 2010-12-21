@@ -1,0 +1,23 @@
+<SplitPane
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns="org.apache.pivot.wtk"
+        wtkx:id="splitPane"
+        orientation="horizontal"
+        splitRatio="0.6">
+    <left>
+        <Border styles="{padding:6}" >
+                <BoxPane styles="{padding:4, verticalAlignment:'center'}">
+                    <Label text="What time is it?"/>
+                </BoxPane>
+        </Border>
+    </left>
+    <right>
+        <Border>
+            <content>
+                <BoxPane styles="{padding:4, verticalAlignment:'center'}">
+                    <Label text="What time is it?"/>
+                </BoxPane>
+            </content>
+        </Border>
+    </right>
+</SplitPane>
