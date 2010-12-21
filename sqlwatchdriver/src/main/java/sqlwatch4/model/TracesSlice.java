@@ -1,11 +1,14 @@
 package sqlwatch4.model;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 
 /**
  * @author dmitry.mamonov
  */
 public class TracesSlice {
+    private static Gson gson = new Gson();
     List<Trace> traces;
 
     public List<Trace> getTraces() {
@@ -14,5 +17,9 @@ public class TracesSlice {
 
     public void setTraces(List<Trace> traces) {
         this.traces = traces;
+    }
+
+    public String toJson(){
+        return gson.toJson(this);
     }
 }
