@@ -1,6 +1,6 @@
 package sqlwatch4.model;
 
-import com.google.gson.Gson;
+import sqlwatch4.rebase.com.google.gson.Gson;
 
 import java.util.List;
 

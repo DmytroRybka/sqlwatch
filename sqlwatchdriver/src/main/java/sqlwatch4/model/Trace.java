@@ -1,12 +1,15 @@
 package sqlwatch4.model;
 
+import net.sf.log4jdbc.Spy;
+
 /**
  * @author dmitry.mamonov
  */
 public class Trace {
     String type;
-    long when;
-    String source;
+    long when = System.currentTimeMillis();
+    long thread = Thread.currentThread().getId();
+    String classType;
     Integer connectionNumber;
     String methodCall;
     String exception;
@@ -20,16 +23,12 @@ public class Trace {
         return when;
     }
 
-    public void setWhen(long when) {
-        this.when = when;
+    public long getThread() {
+        return thread;
     }
 
     public Integer getConnectionNumber() {
         return connectionNumber;
-    }
-
-    public void setConnectionNumber(Integer connectionNumber) {
-        this.connectionNumber = connectionNumber;
     }
 
     public String getConstructionInfo() {
@@ -80,12 +79,8 @@ public class Trace {
         this.returnMessage = returnMessage;
     }
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
+    public String getClassType() {
+        return classType;
     }
 
     public String getSql() {
@@ -102,5 +97,10 @@ public class Trace {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setSpy(Spy spy) {
+        this.classType = spy.getClassType();
+        this.connectionNumber = spy.getConnectionNumber();
     }
 }
