@@ -3,7 +3,7 @@ package sqlwatch4.model;
 /**
  * @author dmitry.mamonov
  */
-public class Sql {
+public class Trace {
     String type;
     long when;
     String source;
