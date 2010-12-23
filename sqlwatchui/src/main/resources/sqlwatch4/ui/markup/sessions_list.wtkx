@@ -1,0 +1,45 @@
+<TablePane
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns="org.apache.pivot.wtk"
+        wtkx:id="tablePane" styles="{
+                    verticalSpacing:1,
+                    showHorizontalGridLines:false,
+                    horizontalSpacing:1,
+                    showVerticalGridLines:true}">
+    <columns>
+        <TablePane.Column width="1*"/>
+    </columns>
+    <rows>
+        <TablePane.Row height="-1">
+            <BoxPane orientation="vertical">
+                <BoxPane styles="{verticalAlignment:'center'}">
+                    <PushButton buttonData="Cut Slice"/>
+                    <Label text="    "/>
+                    <PushButton buttonData="Clear"/>
+                </BoxPane>
+                <BoxPane>
+                    <Checkbox buttonData="Cut by"/>
+                    <LinkButton buttonData="timeout 3s"/>
+                </BoxPane>
+            </BoxPane>
+        </TablePane.Row>
+        <TablePane.Row height="1*">
+            <Border>
+                <content>
+                    <ScrollPane
+                            horizontalScrollBarPolicy="fill"
+                            verticalScrollBarPolicy="fill_to_capacity"
+                            preferredHeight="240">
+                        <view>
+                            <ListView wtkx:id="listView" selectMode="multi"
+                                      listData="['One', 'Two', 'Three', 'Four', 'Five',
+                                            'Six', 'Seven', 'Eight', 'Nine', 'Ten']"/>
+                        </view>
+                    </ScrollPane>
+                </content>
+            </Border>
+        </TablePane.Row>
+    </rows>
+</TablePane>
+
+
