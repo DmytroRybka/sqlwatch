@@ -28,12 +28,20 @@ public class Config {
         return Holder.INSTANCE;
     }
 
+    public boolean isStdoutQueries(){
+        return true;
+    }
+
     public int getMaximumTracesToKeep(){
         return 10000;
     }
 
     public boolean isTraceAll(){
         return false;
+    }
+
+    public boolean isTraceMethods(){
+        return true || isTraceAll();
     }
 
     public static void main(String[] args) throws InterruptedException {

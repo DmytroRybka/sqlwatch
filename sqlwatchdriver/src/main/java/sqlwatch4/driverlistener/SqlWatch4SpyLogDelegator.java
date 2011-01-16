@@ -35,7 +35,40 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
 
     @Override
     public final void methodReturned(Spy spy, String methodCall, String returnMsg) {
-        if (Config.get().isTraceAll()) {
+        if (Config.get().isTraceMethods()) {
+            if (methodCall.startsWith("set")||methodCall.startsWith("get")){
+                return;
+            }
+            if (methodCall.startsWith("clearParameters()")){
+                return;
+            }
+            if (methodCall.startsWith("execute()")){
+                return;
+            }
+            if (methodCall.startsWith("wasNull")){
+                return;
+            }
+            if (methodCall.startsWith("next")){
+                return;
+            }
+            if (methodCall.startsWith("new ")){
+                return;
+            }
+            if (methodCall.startsWith("clearWarnings")){
+                return;
+            }
+            if (methodCall.startsWith("isClosed")){
+                return;
+            }
+            if (methodCall.startsWith("close")){
+                return;
+            }
+            if (methodCall.startsWith("create")){
+                return;
+            }
+            if (methodCall.startsWith("prepare")){
+                return;
+            }
             Trace trace = new Trace();
             trace.setType("MethodReturned");
             trace.setSpy(spy);
