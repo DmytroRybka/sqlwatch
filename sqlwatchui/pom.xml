@@ -28,6 +28,13 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate</artifactId>
             <version>3.2.6.ga</version>
+            <exclusions>
+                <!--temporary commented cause of unavaiability of the artifact-->
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>sqlwatch</groupId>

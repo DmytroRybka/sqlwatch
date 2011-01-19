@@ -1,0 +1,4 @@
+syntax: regexp
+sqlwatchdriver/target/.+
+sqlwatchui/target/.+
+.idea/.+
