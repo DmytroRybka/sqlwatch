@@ -1,4 +1,5 @@
 syntax: regexp
+sqlwatchdemo/target/.+
 sqlwatchdriver/target/.+
 sqlwatchui/target/.+
 \.idea/.+
