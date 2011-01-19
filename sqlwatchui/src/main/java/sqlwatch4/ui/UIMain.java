@@ -2,7 +2,9 @@ package sqlwatch4.ui;
 
 
 import org.apache.commons.io.IOUtils;
+import org.apache.pivot.collections.List;
 import org.apache.pivot.collections.Map;
+import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.serialization.SerializationException;
 import org.apache.pivot.serialization.Serializer;
 import org.apache.pivot.util.concurrent.Task;
@@ -10,33 +12,88 @@ import org.apache.pivot.util.concurrent.TaskExecutionException;
 import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.web.GetQuery;
 import org.apache.pivot.web.QueryException;
-import org.apache.pivot.wtk.Application;
-import org.apache.pivot.wtk.DesktopApplicationContext;
-import org.apache.pivot.wtk.Display;
-import org.apache.pivot.wtk.Window;
+import org.apache.pivot.wtk.*;
+import org.apache.pivot.wtkx.WTKX;
 import org.apache.pivot.wtkx.WTKXSerializer;
 import sqlwatch4.model.TracesSlice;
 import sqlwatch4.rebase.com.google.gson.Gson;
 import sqlwatch4.rebase.com.google.gson.annotations.Expose;
+import sqlwatch4.ui.model.UIModel;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * @author dmitry.mamonov
  */
 public class UIMain implements Application {
+    private UIModel model = new UIModel();
     private Window window = null;
+    @WTKX
+    protected ListView sessionsListView;
+    @WTKX
+    protected PushButton buttonClearSlicesList;
+
+    @WTKX
+    protected TableView tableViewPlain;
 
     @Override
-    public void startup(Display display, Map<String, String> properties)
-            throws Exception {
-        WTKXSerializer wtkxSerializer = new WTKXSerializer();
-        window = (Window) wtkxSerializer.readObject(this, "./markup/frame.wtkx");
-        window.open(display);
+    public void startup(Display display, Map<String, String> properties) throws Exception {
+        try {
+            WTKXSerializer wtkxSerializer = new WTKXSerializer();
+            window = (Window) wtkxSerializer.readObject(this, "./markup/frame.wtkx");
+            {
+                WTKXSerializer wtkxRoot = wtkxSerializer.getSerializer("root_panel");
+                {
+                    WTKXSerializer wtkx = wtkxRoot.getSerializer("sessions_list");
+                    wtkx.bind(this);
+                    sessionsListView.setListData(model.getSlices());
+                    sessionsListView.getListViewSelectionListeners().add(new ListViewSelectionListener.Adapter() {
+                        @Override
+                        public void selectedRangeAdded(ListView listView, int rangeStart, int rangeEnd) {
+                            updateTracesSelection(listView);
+                        }
 
-        RecurrentTask recurrentTask = new RecurrentTask();
+                        @Override
+                        public void selectedRangeRemoved(ListView listView, int rangeStart, int rangeEnd) {
+                            updateTracesSelection(listView);
+                        }
+
+                        @Override
+                        public void selectedRangesChanged(ListView listView, Sequence<Span> previousSelectedRanges) {
+                            updateTracesSelection(listView);
+                        }
+
+                        private void updateTracesSelection(ListView listView) {
+                            model.setSelectedSlices((Sequence<UIModel.Slice>) listView.getSelectedItems());
+                        }
+                    });
+
+                    buttonClearSlicesList.setAction(new Action() {
+                        @Override
+                        public void perform(Component source) {
+                            model.getSlices().clear();
+                        }
+                    });
+                }
+                {
+                    WTKXSerializer wtkxWatch = wtkxRoot.getSerializer("watch_list");
+                    {
+                        WTKXSerializer wtkx = wtkxWatch.getSerializer("watch_plain_panel");
+                        wtkx.bind(this);
+                        tableViewPlain.setTableData(model.getTraces());
+                    }
+                }
+            }
+            window.open(display);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
+
+        RecurrentTask recurrentTask = new RecurrentTask(model);
         recurrentTask.execute(new TaskListener<Integer>() {
             @Override
             public void taskExecuted(Task<Integer> integerTask) {
@@ -84,6 +141,12 @@ public class UIMain implements Application {
 }
 
 class RecurrentTask extends Task<Integer> {
+    UIModel model;
+
+    RecurrentTask(UIModel model) {
+        this.model = model;
+    }
+
     @Override
     public Integer execute() throws TaskExecutionException {
         try {
@@ -110,9 +173,11 @@ class RecurrentTask extends Task<Integer> {
             Object json = query.execute();
             TracesSlice tracesSlice = (TracesSlice) json;
             System.out.println(new Gson().toJson(tracesSlice));
+            model.insert(tracesSlice.getTraces());
             return tracesSlice.getTraces().size();
         } catch (Exception e) {
-            System.out.println("Failed: "+e.getMessage());
+            System.out.println("Failed: " + e.getMessage());
+            e.printStackTrace();
             throw new TaskExecutionException(e);
         }
     }

@@ -13,9 +13,9 @@
         <TablePane.Row height="-1">
             <BoxPane orientation="vertical">
                 <BoxPane styles="{verticalAlignment:'center'}">
-                    <PushButton buttonData="Cut Slice"/>
+                    <PushButton wtkx:id="buttonCutSlice" buttonData="Cut Slice"/>
                     <Label text="    "/>
-                    <PushButton buttonData="Clear"/>
+                    <PushButton wtkx:id="buttonClearSlicesList" buttonData="Clear"/>
                 </BoxPane>
                 <BoxPane>
                     <Checkbox buttonData="Cut by"/>
@@ -31,7 +31,7 @@
                             verticalScrollBarPolicy="fill_to_capacity"
                             preferredHeight="240">
                         <view>
-                            <ListView wtkx:id="listView" selectMode="multi"
+                            <ListView wtkx:id="sessionsListView" selectMode="multi"
                                       listData="['One', 'Two', 'Three', 'Four', 'Five',
                                             'Six', 'Seven', 'Eight', 'Nine', 'Ten']"/>
                         </view>

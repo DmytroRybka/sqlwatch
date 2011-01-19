@@ -10,7 +10,7 @@
             </columns>
             <rows>
                 <TablePane.Row height="1*">
-                    <wtkx:include src="watch_plain_panel.wtkx"/>
+                    <wtkx:include src="watch_plain_panel.wtkx" wtkx:id="watch_plain_panel"/>
                 </TablePane.Row>
             </rows>
         </TablePane>

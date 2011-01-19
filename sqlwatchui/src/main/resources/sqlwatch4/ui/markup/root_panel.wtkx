@@ -7,9 +7,9 @@
         preferredHeight="600"
         splitRatio="0.3">
     <left>
-        <wtkx:include src="sessions_list.wtkx"/>
+        <wtkx:include src="sessions_list.wtkx" wtkx:id="sessions_list"/>
     </left>
     <right>
-        <wtkx:include src="watch_list.wtkx"/>
+        <wtkx:include src="watch_list.wtkx" wtkx:id="watch_list"/>
     </right>
 </SplitPane>

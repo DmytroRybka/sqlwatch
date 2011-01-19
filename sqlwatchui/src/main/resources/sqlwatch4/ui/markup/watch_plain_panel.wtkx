@@ -25,7 +25,7 @@
                         <content>
                             <ScrollPane>
                                 <view>
-                                    <TableView wtkx:id="tableView">
+                                    <TableView wtkx:id="tableViewPlain">
                                         <columns>
                                             <TableView.Column name="when" width="60" headerData="When"/>
                                             <TableView.Column name="thread" width="50" headerData="Thread"/>
@@ -49,8 +49,9 @@
                                         <tableViewSortListeners>
                                             <wtkx:script>
                                                 function sortChanged(tableView) {
-                                                    var tableData = tableView.getTableData();
-                                                    tableData.setComparator(new org.apache.pivot.wtk.content.TableViewRowComparator(tableView));
+                                                var tableData = tableView.getTableData();
+                                                tableData.setComparator(new
+                                                org.apache.pivot.wtk.content.TableViewRowComparator(tableView));
                                                 }
                                             </wtkx:script>
                                         </tableViewSortListeners>
@@ -58,7 +59,7 @@
                                 </view>
 
                                 <columnHeader>
-                                    <TableViewHeader tableView="$tableView"/>
+                                    <TableViewHeader tableView="$tableViewPlain"/>
                                 </columnHeader>
                             </ScrollPane>
 
