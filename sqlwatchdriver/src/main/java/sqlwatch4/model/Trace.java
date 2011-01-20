@@ -6,7 +6,27 @@ import net.sf.log4jdbc.Spy;
  * @author dmitry.mamonov
  */
 public class Trace {
-    String type;
+    public enum Kind {
+        Debug(false),
+        ConnectionClosed(true),
+        ConnectionOpened(true),
+        SqlTiming(true),
+        Sql(false),
+        ConstructorReturned(false),
+        MethodReturned(true),
+        Exception(true);
+        private boolean ui;
+
+        Kind(boolean ui) {
+            this.ui = ui;
+        }
+
+        public boolean isUi() {
+            return ui;
+        }
+    }
+
+    Kind kind;
     long when = System.currentTimeMillis();
     long thread = Thread.currentThread().getId();
     String classType;
@@ -91,12 +111,12 @@ public class Trace {
         this.sql = sql;
     }
 
-    public String getType() {
-        return type;
+    public Kind getKind() {
+        return kind;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setKind(Kind kind) {
+        this.kind = kind;
     }
 
     public void setSpy(Spy spy) {

@@ -2,7 +2,6 @@ package sqlwatch4;
 
 import sqlwatch4.model.Trace;
 import sqlwatch4.model.TracesSlice;
-import sqlwatch4.rebase.com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -32,7 +31,7 @@ public class TracesSliceContainer implements TraceDispatcher.Listener {
             if (trace.getSql() != null && trace.getExecTime() == null) {
 
             } else {
-                System.out.printf("%20s |%30s|%10s |%s | %s\n", trace.getType(), trace.getMethodCall(), trace.getConnectionNumber(), trace.getSql(), trace.getExecTime());
+                System.out.printf("%20s |%30s|%10s |%s | %s\n", trace.getKind(), trace.getMethodCall(), trace.getConnectionNumber(), trace.getSql(), trace.getExecTime());
             }
         }
         runningTraces.add(trace);

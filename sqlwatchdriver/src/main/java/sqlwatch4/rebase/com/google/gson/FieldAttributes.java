@@ -92,7 +92,7 @@ public final class FieldAttributes {
    *   private List&lt;String&gt; red;
    * }
    *
-   * Type listParmeterizedType = new TypeToken<List<String>>() {}.getType();
+   * Type listParmeterizedType = new TypeToken<List<String>>() {}.getKind();
    * </pre>
    *
    * <p>This method would return {@code String.class} for the {@code bar} field and

@@ -22,7 +22,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
     @Override
     public final void exceptionOccured(Spy spy, String methodCall, Exception e, String sql, long execTime) {
         Trace trace = new Trace();
-        trace.setType("Exception");
+        trace.setKind(Trace.Kind.Exception);
         trace.setSpy(spy);
         trace.setMethodCall(methodCall);
         StringWriter sw = new StringWriter();
@@ -42,7 +42,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
             if (methodCall.startsWith("clearParameters()")){
                 return;
             }
-            if (methodCall.startsWith("execute()")){
+            if (methodCall.startsWith("execute")){
                 return;
             }
             if (methodCall.startsWith("wasNull")){
@@ -70,7 +70,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
                 return;
             }
             Trace trace = new Trace();
-            trace.setType("MethodReturned");
+            trace.setKind(Trace.Kind.MethodReturned);
             trace.setSpy(spy);
             trace.setMethodCall(methodCall);
             trace.setReturnMessage(returnMsg);
@@ -81,7 +81,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
     @Override
     public final void constructorReturned(Spy spy, String constructionInfo) {
         Trace trace = new Trace();
-        trace.setType("ConstructorReturned");
+        trace.setKind(Trace.Kind.ConstructorReturned);
         trace.setSpy(spy);
         trace.setConstructionInfo(constructionInfo);
         TraceDispatcher.get().spread(trace);
@@ -90,7 +90,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
     @Override
     public final void sqlOccured(Spy spy, String methodCall, String sql) {
         Trace trace = new Trace();
-        trace.setType("Sql");
+        trace.setKind(Trace.Kind.Sql);
         trace.setSpy(spy);
         trace.setMethodCall(methodCall);
         trace.setSql(sql);
@@ -100,7 +100,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
     @Override
     public final void sqlTimingOccured(Spy spy, long execTime, String methodCall, String sql) {
         Trace trace = new Trace();
-        trace.setType("sqlTiming");
+        trace.setKind(Trace.Kind.SqlTiming);
         trace.setSpy(spy);
         trace.setExecTime(execTime);
         trace.setMethodCall(methodCall);
@@ -111,7 +111,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
     @Override
     public final void connectionOpened(Spy spy) {
         Trace trace = new Trace();
-        trace.setType("ConnectionOpened");
+        trace.setKind(Trace.Kind.ConnectionOpened);
         trace.setSpy(spy);
         TraceDispatcher.get().spread(trace);
     }
@@ -119,7 +119,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
     @Override
     public final void connectionClosed(Spy spy) {
         Trace trace = new Trace();
-        trace.setType("ConnectionClosed");
+        trace.setKind(Trace.Kind.ConnectionClosed);
         trace.setSpy(spy);
         TraceDispatcher.get().spread(trace);
     }
@@ -128,7 +128,7 @@ public class SqlWatch4SpyLogDelegator implements SpyLogDelegator {
     public final void debug(String msg) {
         if (Config.get().isTraceAll()) {
             Trace trace = new Trace();
-            trace.setType("Debug");
+            trace.setKind(Trace.Kind.Debug);
             trace.setMessage(msg);
             TraceDispatcher.get().spread(trace);
         }
