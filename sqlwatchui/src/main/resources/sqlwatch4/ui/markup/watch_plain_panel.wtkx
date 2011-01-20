@@ -27,12 +27,12 @@
                                 <view>
                                     <TableView wtkx:id="tableViewPlain">
                                         <columns>
-                                            <TableView.Column name="when" width="60" headerData="When"/>
+                                            <TableView.Column name="whenTime" width="95" headerData="When"/>
                                             <TableView.Column name="thread" width="50" headerData="Thread"/>
                                             <TableView.Column name="connectionNumber" width="70"
                                                               headerData="Connection"/>
-                                            <TableView.Column name="sql" width="300" headerData="Query"/>
-                                            <TableView.Column name="execTime" width="60" headerData="Dur"/>
+                                            <TableView.Column name="queryOrCommand" width="300" headerData="Query"/>
+                                            <TableView.Column name="durationMs" width="60" headerData="Dur"/>
                                         </columns>
                                         <tableData xmlns="org.apache.pivot.collections">
                                             <ArrayList>
@@ -69,7 +69,7 @@
                 <bottom>
                     <Border styles="{padding:0}">
                         <content>
-                            <wtkx:include src="query_details.wtkx"/>
+                            <wtkx:include src="query_details.wtkx" wtkx:id="query_details"/>
                         </content>
                     </Border>
                 </bottom>

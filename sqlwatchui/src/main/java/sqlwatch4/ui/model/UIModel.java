@@ -2,7 +2,6 @@ package sqlwatch4.ui.model;
 
 import com.google.inject.internal.Preconditions;
 import org.apache.pivot.collections.*;
-import sqlwatch4.model.Trace;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,14 +16,14 @@ import java.util.Set;
 public class UIModel {
     SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     org.apache.pivot.collections.List<Slice> slices = new org.apache.pivot.collections.ArrayList<Slice>();
-    org.apache.pivot.collections.List<Trace> traces = new org.apache.pivot.collections.ArrayList<Trace>();
+    org.apache.pivot.collections.List<UITrace> traces = new org.apache.pivot.collections.ArrayList<UITrace>();
     Set<Slice> selectedSlices = new LinkedHashSet<Slice>();
 
     public org.apache.pivot.collections.List<Slice> getSlices() {
         return slices;
     }
 
-    public org.apache.pivot.collections.List<Trace> getTraces() {
+    public org.apache.pivot.collections.List<UITrace> getTraces() {
         return traces;
     }
 
@@ -45,23 +44,23 @@ public class UIModel {
     protected void traceInit() {
         traces.clear();
         for (Slice slice : selectedSlices) {
-            for (Trace trace : slice.getTraces()) {
+            for (UITrace trace : slice.getTraces()) {
                 traces.add(trace);
             }
         }
         System.out.println("Traces view reinitizlied");
     }
 
-    protected void tracesAdd(Trace trace){
+    protected void tracesAdd(UITrace trace) {
         traces.add(trace);
     }
 
     public class Slice {
         boolean selected = false;
-        List<Trace> traces = new ArrayList<Trace>();
-        List<Trace> newlyAddedTraces = new ArrayList<Trace>();
+        List<UITrace> traces = new ArrayList<UITrace>();
+        List<UITrace> newlyAddedTraces = new ArrayList<UITrace>();
 
-        public Slice(Trace initialTrace) {
+        public Slice(UITrace initialTrace) {
             update(initialTrace);
 
         }
@@ -74,7 +73,7 @@ public class UIModel {
             this.selected = selected;
         }
 
-        public List<Trace> getTraces() {
+        public List<UITrace> getTraces() {
             return traces;
         }
 
@@ -83,7 +82,7 @@ public class UIModel {
             slices.update(slices.indexOf(this), this);
             if (newlyAddedTraces.isEmpty() == false) {
                 if (isSelected()) {
-                    for (Trace newTrace : newlyAddedTraces) {
+                    for (UITrace newTrace : newlyAddedTraces) {
                         tracesAdd(newTrace);
                     }
                 }
@@ -91,7 +90,7 @@ public class UIModel {
             }
         }
 
-        public void update(Trace newTrace) {
+        public void update(UITrace newTrace) {
             Preconditions.checkNotNull(newTrace);
             traces.add(newTrace);
             if (isSelected()) {
@@ -99,18 +98,18 @@ public class UIModel {
             }
         }
 
-        public Trace getLatestTrace() {
+        public UITrace getLatestTrace() {
             return traces.get(traces.size() - 1);
         }
 
-        public Trace getFirstTraceOrNull() {
+        public UITrace getFirstTraceOrNull() {
             return traces.get(0);
         }
 
         @Override
         public String toString() {
-            Trace first = getFirstTraceOrNull();
-            Trace last = getLatestTrace();
+            UITrace first = getFirstTraceOrNull();
+            UITrace last = getLatestTrace();
             return timeFormat.format(new Date(first.getWhen())) + " .. " +
                     timeFormat.format(new Date(last.getWhen())) + String.format(" [queries=%d] %6dms", traces.size(), last.getWhen() - first.getWhen());
         }
@@ -123,7 +122,7 @@ public class UIModel {
         return slices.get(slices.getLength() - 1);
     }
 
-    protected Slice cutNewSlice(Trace initialTrace) {
+    protected Slice cutNewSlice(UITrace initialTrace) {
         Slice latest = getLatestSlice();
         if (latest != null) {
             latest.refreshAfterUpdate();
@@ -134,7 +133,7 @@ public class UIModel {
         return newSlice;
     }
 
-    protected boolean isCutNewSlice(Trace prev, Trace next) {
+    protected boolean isCutNewSlice(UITrace prev, UITrace next) {
         if (prev != null && next != null) {
             if (next.getWhen() - prev.getWhen() > 3000L) {
                 return true;
@@ -144,17 +143,20 @@ public class UIModel {
     }
 
     @SuppressWarnings({"PointlessBooleanExpression"})
-    public void insert(List<Trace> newTraces) {
+    public void insert(List<UITrace> newTraces) {
         if (newTraces.isEmpty() == false) {
             Slice latest = getLatestSlice();
-            Trace prev = latest != null ? latest.getLatestTrace() : null;
-            for (Trace next : newTraces) {
-                if (isCutNewSlice(prev, next) || latest == null) {
-                    latest = cutNewSlice(next);
-                } else {
-                    latest.update(next);
+            UITrace prev = latest != null ? latest.getLatestTrace() : null;
+            for (UITrace next : newTraces) {
+                UITrace.Kind kind = next != null ? next.getKind() : null;
+                if (kind != null && kind.isUi()) {
+                    if (isCutNewSlice(prev, next) || latest == null) {
+                        latest = cutNewSlice(next);
+                    } else {
+                        latest.update(next);
+                    }
+                    prev = next;
                 }
-                prev = next;
             }
             if (latest != null) {
                 latest.refreshAfterUpdate();

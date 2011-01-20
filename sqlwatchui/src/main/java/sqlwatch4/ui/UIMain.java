@@ -15,10 +15,13 @@ import org.apache.pivot.web.QueryException;
 import org.apache.pivot.wtk.*;
 import org.apache.pivot.wtkx.WTKX;
 import org.apache.pivot.wtkx.WTKXSerializer;
+import org.hibernate.pretty.Formatter;
+import sqlwatch4.model.Trace;
 import sqlwatch4.model.TracesSlice;
 import sqlwatch4.rebase.com.google.gson.Gson;
 import sqlwatch4.rebase.com.google.gson.annotations.Expose;
 import sqlwatch4.ui.model.UIModel;
+import sqlwatch4.ui.model.UITracesSlice;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +41,9 @@ public class UIMain implements Application {
 
     @WTKX
     protected TableView tableViewPlain;
+
+    @WTKX
+    protected TextArea textAreaQueryDetails;
 
     @Override
     public void startup(Display display, Map<String, String> properties) throws Exception {
@@ -83,7 +89,39 @@ public class UIMain implements Application {
                     {
                         WTKXSerializer wtkx = wtkxWatch.getSerializer("watch_plain_panel");
                         wtkx.bind(this);
+                        {
+                            WTKXSerializer wtkxDetails = wtkx.getSerializer("query_details");
+                            wtkxDetails.bind(this);
+                        }
                         tableViewPlain.setTableData(model.getTraces());
+                        tableViewPlain.getTableViewSelectionListeners().add(new TableViewSelectionListener.Adapter() {
+                            @Override
+                            public void selectedRangeAdded(TableView tableView, int rangeStart, int rangeEnd) {
+                                processSelected(tableView);
+                            }
+
+                            @Override
+                            public void selectedRangeRemoved(TableView tableView, int rangeStart, int rangeEnd) {
+                                processSelected(tableView);
+                            }
+
+                            @Override
+                            public void selectedRangesChanged(TableView tableView, Sequence<Span> previousSelectedRanges) {
+                                processSelected(tableView);
+                            }
+
+                            private void processSelected(TableView tableView) {
+                                //TODO: (x-pivot) it looks like selection is not properly dropped all the time.
+                                Trace selectedTrace = (Trace) tableView.getSelectedRow();
+                                System.out.println("SELECTED COUND: "+tableView.getSelectedRows().getLength());
+                                String sql = selectedTrace != null ? String.valueOf(selectedTrace.getSql()) : "-- not selected.";
+                                Formatter f = new Formatter(sql);
+                                f.setInitialString("");
+                                f.setIndentString("  ");
+                                String formattedSql = f.format();
+                                textAreaQueryDetails.setText(formattedSql);
+                            }
+                        });
                     }
                 }
             }
@@ -157,7 +195,7 @@ class RecurrentTask extends Task<Integer> {
                 @Override
                 public Object readObject(InputStream inputStream) throws IOException, SerializationException {
                     String json = IOUtils.toString(inputStream, "UTF-8");
-                    return gson.fromJson(json, TracesSlice.class);
+                    return gson.fromJson(json, UITracesSlice.class);
                 }
 
                 @Override
@@ -171,7 +209,7 @@ class RecurrentTask extends Task<Integer> {
                 }
             });
             Object json = query.execute();
-            TracesSlice tracesSlice = (TracesSlice) json;
+            UITracesSlice tracesSlice = (UITracesSlice) json;
             System.out.println(new Gson().toJson(tracesSlice));
             model.insert(tracesSlice.getTraces());
             return tracesSlice.getTraces().size();

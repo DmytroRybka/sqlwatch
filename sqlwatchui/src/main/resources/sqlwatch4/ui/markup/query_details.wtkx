@@ -6,6 +6,6 @@
         verticalScrollBarPolicy="fill_to_capacity"
         preferredHeight="240">
     <view>
-        <TextArea text="sample1.txt"/>
+        <TextArea text="SELECT * FROM uno;" wtkx:id="textAreaQueryDetails"/>
     </view>
 </ScrollPane>
