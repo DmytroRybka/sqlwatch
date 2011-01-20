@@ -2,11 +2,14 @@ package sqlwatch4.ui.model;
 
 import com.google.inject.internal.Preconditions;
 import org.apache.pivot.collections.*;
+import sqlwatch4.model.Trace;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -17,6 +20,7 @@ public class UIModel {
     SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     org.apache.pivot.collections.List<Slice> slices = new org.apache.pivot.collections.ArrayList<Slice>();
     org.apache.pivot.collections.List<UITrace> traces = new org.apache.pivot.collections.ArrayList<UITrace>();
+    org.apache.pivot.collections.List<StatByTable> statByTableList = new org.apache.pivot.collections.ArrayList<StatByTable>();
     Set<Slice> selectedSlices = new LinkedHashSet<Slice>();
 
     public org.apache.pivot.collections.List<Slice> getSlices() {
@@ -25,6 +29,10 @@ public class UIModel {
 
     public org.apache.pivot.collections.List<UITrace> getTraces() {
         return traces;
+    }
+
+    public org.apache.pivot.collections.List<StatByTable> getStatByTableList() {
+        return statByTableList;
     }
 
     public void setSelectedSlices(Sequence<Slice> nowSelectedSlices) {
@@ -49,10 +57,33 @@ public class UIModel {
             }
         }
         System.out.println("Traces view reinitizlied");
+        updateStat();
     }
 
     protected void tracesAdd(UITrace trace) {
         traces.add(trace);
+        updateStat();
+    }
+
+    private void updateStat() {
+        Map<StatByTable, StatByTable> statSet = new HashMap<StatByTable, StatByTable>();
+        for (UITrace trace : traces) {
+            if (trace.getKind() == Trace.Kind.SqlTiming) {
+                StatByTable stat = new StatByTable(trace);
+                StatByTable alrady = statSet.get(stat);
+                if (alrady != null) {
+                    alrady.merge(stat);
+                } else {
+                    statSet.put(stat, stat);
+                }
+            }
+        }
+        List<StatByTable> statList = new ArrayList<StatByTable>(statSet.keySet());
+        Collections.sort(statList);
+        statByTableList.clear();
+        for (StatByTable stat : statList) {
+            statByTableList.add(stat);
+        }
     }
 
     public class Slice {
