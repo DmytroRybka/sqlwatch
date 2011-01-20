@@ -1,0 +1,1 @@
+mvn org.codehaus.mojo:exec-maven-plugin:1.1-beta-1:java
