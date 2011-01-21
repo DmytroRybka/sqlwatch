@@ -217,6 +217,7 @@ class RecurrentTask extends Task<Integer> {
                     throw new UnsupportedOperationException("Read only!");
                 }
             });
+            query.setTimeout(1000);
             Object json = query.execute();
             UITracesSlice tracesSlice = (UITracesSlice) json;
             //System.out.println(new Gson().toJson(tracesSlice));
