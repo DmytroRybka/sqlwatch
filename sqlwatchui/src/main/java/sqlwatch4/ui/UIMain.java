@@ -2,7 +2,6 @@ package sqlwatch4.ui;
 
 
 import org.apache.commons.io.IOUtils;
-import org.apache.pivot.collections.List;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.serialization.SerializationException;
@@ -11,22 +10,18 @@ import org.apache.pivot.util.concurrent.Task;
 import org.apache.pivot.util.concurrent.TaskExecutionException;
 import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.web.GetQuery;
-import org.apache.pivot.web.QueryException;
 import org.apache.pivot.wtk.*;
 import org.apache.pivot.wtkx.WTKX;
 import org.apache.pivot.wtkx.WTKXSerializer;
 import org.hibernate.pretty.Formatter;
-import sqlwatch4.model.Trace;
-import sqlwatch4.model.TracesSlice;
 import sqlwatch4.rebase.com.google.gson.Gson;
-import sqlwatch4.rebase.com.google.gson.annotations.Expose;
 import sqlwatch4.ui.model.UIModel;
+import sqlwatch4.ui.model.UITrace;
 import sqlwatch4.ui.model.UITracesSlice;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 /**
  * @author dmitry.mamonov
@@ -72,15 +67,16 @@ public class UIMain implements Application {
                             updateTracesSelection(listView);
                         }
 
+                        @SuppressWarnings({"unchecked"})
                         private void updateTracesSelection(ListView listView) {
-                            model.setSelectedSlices((Sequence<UIModel.Slice>) listView.getSelectedItems());
+                            model.setSelectedSlices((Sequence<UIModel.UISlice>) listView.getSelectedItems());
                         }
                     });
 
                     buttonClearSlicesList.setAction(new Action() {
                         @Override
                         public void perform(Component source) {
-                            model.getSlices().clear();
+                            model.clear();
                         }
                     });
                 }
@@ -112,13 +108,26 @@ public class UIMain implements Application {
 
                             private void processSelected(TableView tableView) {
                                 //TODO: (x-pivot) it looks like selection is not properly dropped all the time.
-                                Trace selectedTrace = (Trace) tableView.getSelectedRow();
+                                UITrace selectedTrace = (UITrace) tableView.getSelectedRow();
                                 System.out.println("SELECTED COUND: "+tableView.getSelectedRows().getLength());
                                 String sql = selectedTrace != null ? String.valueOf(selectedTrace.getSql()) : "-- not selected.";
                                 Formatter f = new Formatter(sql);
                                 f.setInitialString("");
                                 f.setIndentString("  ");
                                 String formattedSql = f.format();
+                                if (selectedTrace.getStackTrace()!=null){
+                                    StringBuilder myLines = new StringBuilder();
+                                    for(String line:selectedTrace.getStackTrace().split("\n")){
+                                        String trimLine = line.trim();
+                                        if (trimLine.startsWith("at com.muranosoft")){
+                                            myLines.append(trimLine+"\n");
+                                        }
+                                    }
+                                    if (myLines.length()>0){
+                                        formattedSql+="\n\n"+myLines.toString();
+                                    }
+                                    formattedSql+="\n\n"+selectedTrace.getStackTrace();
+                                }
                                 textAreaQueryDetails.setText(formattedSql);
                             }
                         });
@@ -145,7 +154,7 @@ public class UIMain implements Application {
 
             private void repeat(Task<Integer> integerTask) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                     integerTask.execute(this);
                 } catch (InterruptedException e) {
                     e.printStackTrace();  //TODO [DM] exit.
@@ -210,7 +219,7 @@ class RecurrentTask extends Task<Integer> {
             });
             Object json = query.execute();
             UITracesSlice tracesSlice = (UITracesSlice) json;
-            System.out.println(new Gson().toJson(tracesSlice));
+            //System.out.println(new Gson().toJson(tracesSlice));
             model.insert(tracesSlice.getTraces());
             return tracesSlice.getTraces().size();
         } catch (Exception e) {

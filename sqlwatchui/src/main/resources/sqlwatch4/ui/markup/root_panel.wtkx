@@ -5,7 +5,7 @@
         orientation="horizontal"
         preferredWidth="800"
         preferredHeight="600"
-        splitRatio="0.3">
+        splitRatio="0.2">
     <left>
         <wtkx:include src="sessions_list.wtkx" wtkx:id="sessions_list"/>
     </left>
