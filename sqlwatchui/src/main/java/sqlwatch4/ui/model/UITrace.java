@@ -22,7 +22,7 @@ public class UITrace extends Trace {
 
     public String getDurationMs() {
         if (getExecTime() != null) {
-            return Math.round((double) getExecTime() / 1000000.0) + "ms";
+            return String.format("%6.1fms", (double) getExecTime() / 1000000.0);
         } else {
             return "";
         }
@@ -39,5 +39,4 @@ public class UITrace extends Trace {
             }
         }
     }
-
 }

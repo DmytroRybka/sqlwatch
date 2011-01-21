@@ -18,12 +18,19 @@ import java.util.Set;
  */
 public class UIModel {
     SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-    org.apache.pivot.collections.List<Slice> slices = new org.apache.pivot.collections.ArrayList<Slice>();
+    org.apache.pivot.collections.List<UISlice> slices = new org.apache.pivot.collections.ArrayList<UISlice>();
     org.apache.pivot.collections.List<UITrace> traces = new org.apache.pivot.collections.ArrayList<UITrace>();
     org.apache.pivot.collections.List<StatByTable> statByTableList = new org.apache.pivot.collections.ArrayList<StatByTable>();
-    Set<Slice> selectedSlices = new LinkedHashSet<Slice>();
+    Set<UISlice> selectedSlices = new LinkedHashSet<UISlice>();
 
-    public org.apache.pivot.collections.List<Slice> getSlices() {
+    public void clear(){
+        slices.clear();
+        traces.clear();
+        selectedSlices.clear();
+        statByTableList.clear();
+    }
+
+    public org.apache.pivot.collections.List<UISlice> getSlices() {
         return slices;
     }
 
@@ -35,14 +42,14 @@ public class UIModel {
         return statByTableList;
     }
 
-    public void setSelectedSlices(Sequence<Slice> nowSelectedSlices) {
-        for (Slice slice : selectedSlices) {
+    public void setSelectedSlices(Sequence<UISlice> nowSelectedSlices) {
+        for (UISlice slice : selectedSlices) {
             slice.setSelected(false);
         }
         selectedSlices.clear();
         final int length = nowSelectedSlices.getLength();
         for (int i = 0; i < length; i++) {
-            Slice slice = nowSelectedSlices.get(i);
+            UISlice slice = nowSelectedSlices.get(i);
             slice.setSelected(true);
             selectedSlices.add(slice);
         }
@@ -51,7 +58,7 @@ public class UIModel {
 
     protected void traceInit() {
         traces.clear();
-        for (Slice slice : selectedSlices) {
+        for (UISlice slice : selectedSlices) {
             for (UITrace trace : slice.getTraces()) {
                 traces.add(trace);
             }
@@ -86,12 +93,12 @@ public class UIModel {
         }
     }
 
-    public class Slice {
+    public class UISlice {
         boolean selected = false;
         List<UITrace> traces = new ArrayList<UITrace>();
         List<UITrace> newlyAddedTraces = new ArrayList<UITrace>();
 
-        public Slice(UITrace initialTrace) {
+        public UISlice(UITrace initialTrace) {
             update(initialTrace);
 
         }
@@ -142,24 +149,24 @@ public class UIModel {
             UITrace first = getFirstTraceOrNull();
             UITrace last = getLatestTrace();
             return timeFormat.format(new Date(first.getWhen())) + " .. " +
-                    timeFormat.format(new Date(last.getWhen())) + String.format(" [queries=%d] %6dms", traces.size(), last.getWhen() - first.getWhen());
+                    timeFormat.format(new Date(last.getWhen())) + String.format(" [%d] %6dms", traces.size(), last.getWhen() - first.getWhen());
         }
     }
 
-    protected Slice getLatestSlice() {
+    protected UISlice getLatestSlice() {
         if (slices.getLength() == 0) {
             return null;
         }
         return slices.get(slices.getLength() - 1);
     }
 
-    protected Slice cutNewSlice(UITrace initialTrace) {
-        Slice latest = getLatestSlice();
+    protected UISlice cutNewSlice(UITrace initialTrace) {
+        UISlice latest = getLatestSlice();
         if (latest != null) {
             latest.refreshAfterUpdate();
         }
         System.out.println("cut new slice");
-        Slice newSlice = new Slice(initialTrace);
+        UISlice newSlice = new UISlice(initialTrace);
         slices.add(newSlice);
         return newSlice;
     }
@@ -176,7 +183,7 @@ public class UIModel {
     @SuppressWarnings({"PointlessBooleanExpression"})
     public void insert(List<UITrace> newTraces) {
         if (newTraces.isEmpty() == false) {
-            Slice latest = getLatestSlice();
+            UISlice latest = getLatestSlice();
             UITrace prev = latest != null ? latest.getLatestTrace() : null;
             for (UITrace next : newTraces) {
                 UITrace.Kind kind = next != null ? next.getKind() : null;
@@ -192,7 +199,7 @@ public class UIModel {
             if (latest != null) {
                 latest.refreshAfterUpdate();
             }
-            System.out.println("added: " + newTraces.size());
+            //System.out.println("added: " + newTraces.size());
         }
     }
 }

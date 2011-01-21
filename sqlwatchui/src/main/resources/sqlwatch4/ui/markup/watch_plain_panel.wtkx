@@ -19,20 +19,20 @@
             </BoxPane>
         </TablePane.Row>
         <TablePane.Row height="1*">
-            <SplitPane wtkx:id="splitPane" orientation="vertical" splitRatio="0.6" preferredHeight="600">
-                <top>
+            <SplitPane wtkx:id="splitPane" orientation="horizontal" splitRatio="0.6" preferredHeight="600">
+                <left>
                     <Border styles="{padding:6}">
                         <content>
                             <ScrollPane>
                                 <view>
-                                    <TableView wtkx:id="tableViewPlain">
+                                    <TableView wtkx:id="tableViewPlain" styles="{font:{size:9, bold:false}}">
                                         <columns>
                                             <TableView.Column name="whenTime" width="95" headerData="When"/>
-                                            <TableView.Column name="thread" width="50" headerData="Thread"/>
-                                            <TableView.Column name="connectionNumber" width="70"
+                                            <TableView.Column name="thread" width="30" headerData="Thread"/>
+                                            <TableView.Column name="connectionNumber" width="30"
                                                               headerData="Connection"/>
-                                            <TableView.Column name="queryOrCommand" width="300" headerData="Query"/>
                                             <TableView.Column name="durationMs" width="60" headerData="Dur"/>
+                                            <TableView.Column name="queryOrCommand" width="800" headerData="Query"/>
                                         </columns>
                                         <tableData xmlns="org.apache.pivot.collections">
                                             <ArrayList>
@@ -65,14 +65,14 @@
 
                         </content>
                     </Border>
-                </top>
-                <bottom>
+                </left>
+                <right>
                     <Border styles="{padding:0}">
                         <content>
                             <wtkx:include src="query_details.wtkx" wtkx:id="query_details"/>
                         </content>
                     </Border>
-                </bottom>
+                </right>
             </SplitPane>
         </TablePane.Row>
     </rows>
