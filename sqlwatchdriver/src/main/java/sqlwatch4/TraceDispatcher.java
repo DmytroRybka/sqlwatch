@@ -2,6 +2,9 @@ package sqlwatch4;
 
 import sqlwatch4.model.Trace;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -25,6 +28,11 @@ public class TraceDispatcher {
     private CopyOnWriteArraySet<Listener> listeners = new CopyOnWriteArraySet<Listener>();
 
     public void spread(Trace trace){
+        if (Config.get().isShowStackTrace()){
+            StringWriter sw = new StringWriter();
+            new Exception("WE ARE HERE").printStackTrace(new PrintWriter(sw));
+            trace.setStackTrace(sw.toString());
+        }
         for(Listener lst:listeners){
             try {
                 lst.takeTrace(trace);

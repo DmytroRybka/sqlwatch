@@ -28,10 +28,9 @@ public class TracesSliceContainer implements TraceDispatcher.Listener {
     public void takeTrace(Trace trace) {
         eliminateOverflow();
         if (Config.get().isStdoutQueries()) {
-            if (trace.getSql() != null && trace.getExecTime() == null) {
-
-            } else {
-                System.out.printf("%20s |%30s|%10s |%s | %s\n", trace.getKind(), trace.getMethodCall(), trace.getConnectionNumber(), trace.getSql(), trace.getExecTime());
+            if (trace.getSql() != null && trace.getExecTime() != null) {
+                String line = String.format("%20s |%30s|%10s |%s | %s\n", trace.getKind(), trace.getMethodCall(), trace.getConnectionNumber(), trace.getSql(), trace.getExecTime());
+                System.out.println(line);
             }
         }
         runningTraces.add(trace);
