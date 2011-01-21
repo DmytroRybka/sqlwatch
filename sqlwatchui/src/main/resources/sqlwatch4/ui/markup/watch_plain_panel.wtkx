@@ -1,0 +1,79 @@
+<TablePane
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns="org.apache.pivot.wtk"
+        wtkx:id="tablePane" styles="{
+                    verticalSpacing:1,
+                    showHorizontalGridLines:false,
+                    horizontalSpacing:1,
+                    showVerticalGridLines:true}">
+    <columns>
+        <TablePane.Column width="1*"/>
+    </columns>
+    <rows>
+        <TablePane.Row height="-1">
+            <BoxPane styles="{verticalAlignment:'center'}">
+                <Label text="Filter:"/>
+                <TextInput prompt="None, Double click on cell" enabled="false"/>
+                <Label text=""/>
+                <!--TODO expected prompt field for Label-->
+            </BoxPane>
+        </TablePane.Row>
+        <TablePane.Row height="1*">
+            <SplitPane wtkx:id="splitPane" orientation="vertical" splitRatio="0.6" preferredHeight="600">
+                <top>
+                    <Border styles="{padding:6}">
+                        <content>
+                            <ScrollPane>
+                                <view>
+                                    <TableView wtkx:id="tableViewPlain">
+                                        <columns>
+                                            <TableView.Column name="whenTime" width="95" headerData="When"/>
+                                            <TableView.Column name="thread" width="50" headerData="Thread"/>
+                                            <TableView.Column name="connectionNumber" width="70"
+                                                              headerData="Connection"/>
+                                            <TableView.Column name="queryOrCommand" width="300" headerData="Query"/>
+                                            <TableView.Column name="durationMs" width="60" headerData="Dur"/>
+                                        </columns>
+                                        <tableData xmlns="org.apache.pivot.collections">
+                                            <ArrayList>
+                                                <HashMap when="13:25:33" thread="12" connectionNumber="2"
+                                                         sql="SELECT * FROM user WHERE id=1" execTime="17ms"/>
+                                                <HashMap when="13:25:34" thread="12" connectionNumber="2"
+                                                         sql="SELECT * FROM user WHERE id=2" execTime="12ms"/>
+                                                <HashMap when="13:25:35" thread="12" connectionNumber="2"
+                                                         sql="SELECT * FROM user WHERE id=3" execTime="13ms"/>
+                                                <HashMap when="13:25:36" thread="12" connectionNumber="2"
+                                                         sql="SELECT * FROM user WHERE id=4" execTime="4ms"/>
+                                            </ArrayList>
+                                        </tableData>
+                                        <tableViewSortListeners>
+                                            <wtkx:script>
+                                                function sortChanged(tableView) {
+                                                var tableData = tableView.getTableData();
+                                                tableData.setComparator(new
+                                                org.apache.pivot.wtk.content.TableViewRowComparator(tableView));
+                                                }
+                                            </wtkx:script>
+                                        </tableViewSortListeners>
+                                    </TableView>
+                                </view>
+
+                                <columnHeader>
+                                    <TableViewHeader tableView="$tableViewPlain"/>
+                                </columnHeader>
+                            </ScrollPane>
+
+                        </content>
+                    </Border>
+                </top>
+                <bottom>
+                    <Border styles="{padding:0}">
+                        <content>
+                            <wtkx:include src="query_details.wtkx" wtkx:id="query_details"/>
+                        </content>
+                    </Border>
+                </bottom>
+            </SplitPane>
+        </TablePane.Row>
+    </rows>
+</TablePane>

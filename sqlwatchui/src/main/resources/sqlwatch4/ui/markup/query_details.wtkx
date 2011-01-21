@@ -1,0 +1,11 @@
+<ScrollPane
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns="org.apache.pivot.wtk"
+
+        horizontalScrollBarPolicy="fill"
+        verticalScrollBarPolicy="fill_to_capacity"
+        preferredHeight="240">
+    <view>
+        <TextArea text="SELECT * FROM uno;" wtkx:id="textAreaQueryDetails"/>
+    </view>
+</ScrollPane>
