@@ -44,6 +44,10 @@ public class Config {
         return true || isTraceAll();
     }
 
+    public boolean isShowStackTrace(){
+        return true;
+    }
+
     public static void main(String[] args) throws InterruptedException {
         get().getMaximumTracesToKeep();
         Thread.sleep(30*1000);
