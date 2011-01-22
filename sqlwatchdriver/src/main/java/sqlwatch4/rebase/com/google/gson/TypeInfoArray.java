@@ -54,7 +54,7 @@ final class TypeInfoArray extends TypeInfo {
    * elements of the array. For example, this method returns Foo.class for Foo[].
    * It will return Foo[].class for Foo[][].  For Foo&lt;String&gt;[][] types, it will return the 
    * type representing Foo&lt;String&gt;[] 
-   * (i.e. <code>new TypeToken<Foo<String>[]>() {}.getKind()</code>).
+   * (i.e. <code>new TypeToken<Foo<String>[]>() {}.getType()</code>).
    */
   public Type getSecondLevelType() {
     return secondLevel;
