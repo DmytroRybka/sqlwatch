@@ -2,8 +2,8 @@ package sqlwatch4.ui.model;
 
 import com.google.inject.internal.Preconditions;
 import sqlwatch4.model.Trace;
+import sqlwatch4.ui.adapters.CountingMap;
 
-import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,8 +16,8 @@ import java.util.Set;
 public class StatByTable implements Comparable<StatByTable> {
     String queryType;
     String baseTable;
-    Set<String> uniqueSql = new HashSet<String>();
-    Set<String> uniqueSqlNoDigits = new HashSet<String>();
+    CountingMap<String> uniqueSql = new CountingMap<String>();
+    CountingMap<String> uniqueStructureSql = new CountingMap<String>();
     List<Trace> traces = new ArrayList<Trace>(1);
     long totalDuration = 0L;
     long globalTotalCount = 1;
@@ -30,15 +30,18 @@ public class StatByTable implements Comparable<StatByTable> {
         this.baseTable = extractBaseTable(sqlSplit);
         this.totalDuration = trace.getExecTime();
         this.traces.add(trace);
-        this.uniqueSql.add(trace.getSql());
-        this.uniqueSqlNoDigits.add(trace.getSql().replaceAll("[0-9]]+", "?"));
+        this.uniqueSql.put(trace.getSql());
+        this.uniqueStructureSql.put(trace.getSql()
+                .trim()
+                .replaceAll("'[^']*'", "?")
+                .replaceAll("-?[0-9]+", "?"));
     }
 
     public void merge(StatByTable merge) {
         Preconditions.checkArgument(getQueryType().equals(merge.getQueryType()));
         Preconditions.checkArgument(getBaseTable().equals(merge.getBaseTable()));
-        this.uniqueSql.addAll(merge.getUniqueSql());
-        this.uniqueSqlNoDigits.addAll(merge.getUniqueSqlNoDigits());
+        this.uniqueSql.putAll(merge.getUniqueSql());
+        this.uniqueStructureSql.putAll(merge.getUniqueStructureSql());
         this.traces.addAll(merge.getTraces());
         this.totalDuration += merge.getTotalDuration();
     }
@@ -65,19 +68,19 @@ public class StatByTable implements Comparable<StatByTable> {
         return totalDuration;
     }
 
-    public Set<String> getUniqueSql() {
+    public CountingMap<String> getUniqueSql() {
         return uniqueSql;
     }
 
-    public Set<String> getUniqueSqlNoDigits() {
-        return uniqueSqlNoDigits;
+    public CountingMap<String> getUniqueStructureSql() {
+        return uniqueStructureSql;
     }
 
     private String extractBaseTable(String[] sqlSplit) {
         for (int i = 0; i < sqlSplit.length - 1; i++) {
             String sqlItem = sqlSplit[i];
             if ("from".equals(sqlItem) || "into".equals(sqlItem) || "update".equals(sqlItem)) {
-                return sqlSplit[i + 1];
+                return sqlSplit[i + 1].replaceAll("[(]].*","()");
             }
         }
         return "Unknown";
@@ -112,8 +115,8 @@ public class StatByTable implements Comparable<StatByTable> {
         return uniqueSql.size();
     }
 
-    public int getUniqueNoDigitsRequestsCount() {
-        return uniqueSqlNoDigits.size();
+    public int getUniqueStructureRequestsCount() {
+        return uniqueStructureSql.size();
     }
 
     public double getUselessSqlPercent() {
@@ -122,6 +125,14 @@ public class StatByTable implements Comparable<StatByTable> {
 
     public String getUselessSqlPercentStr() {
         return String.format("%5.2f%%", getUselessSqlPercent() * 100.0);
+    }
+
+    public double getUselessStructureSqlPercent() {
+        return (traces.size() - uniqueStructureSql.size()) / (double) traces.size();
+    }
+
+    public String getUselessStructureSqlPercentStr() {
+        return String.format("%5.2f%%", getUselessStructureSqlPercent() * 100.0);
     }
 
     public double getRequestCountOfTotalPercent() {
