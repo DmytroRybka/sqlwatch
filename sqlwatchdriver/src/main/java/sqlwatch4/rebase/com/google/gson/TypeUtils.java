@@ -36,7 +36,7 @@ final class TypeUtils {
    * <pre>
    *   class Foo<A, B> {
    *   }
-   *   Type fooType = new TypeToken<Foo<Integer, String>>() {}.getKind();
+   *   Type fooType = new TypeToken<Foo<Integer, String>>() {}.getType();
    * </pre>
    * <code>TypeUtils.getActualTypeForFirstTypeVariable(fooType)</code> will return Integer.class.
    */

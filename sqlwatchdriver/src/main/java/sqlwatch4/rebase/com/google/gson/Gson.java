@@ -52,7 +52,7 @@ import java.util.Map;
  * example for serializing and deserialing a {@code ParameterizedType}:
  *
  * <pre>
- * Type listType = new TypeToken&lt;List&lt;String&gt;&gt;() {}.getKind();
+ * Type listType = new TypeToken&lt;List&lt;String&gt;&gt;() {}.getType();
  * List&lt;String&gt; target = new LinkedList&lt;String&gt;();
  * target.add("blah");
  *
@@ -216,7 +216,7 @@ public final class Gson {
    * this type by using the {@link sqlwatch4.rebase.com.google.gson.reflect.TypeToken} class. For example,
    * to get the type for {@code Collection<Foo>}, you should use:
    * <pre>
-   * Type typeOfSrc = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getKind();
+   * Type typeOfSrc = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @return Json representation of {@code src}
    * @since 1.4
@@ -261,7 +261,7 @@ public final class Gson {
    * this type by using the {@link sqlwatch4.rebase.com.google.gson.reflect.TypeToken} class. For example,
    * to get the type for {@code Collection<Foo>}, you should use:
    * <pre>
-   * Type typeOfSrc = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getKind();
+   * Type typeOfSrc = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @return Json representation of {@code src}
    */
@@ -306,7 +306,7 @@ public final class Gson {
    * this type by using the {@link sqlwatch4.rebase.com.google.gson.reflect.TypeToken} class. For example,
    * to get the type for {@code Collection<Foo>}, you should use:
    * <pre>
-   * Type typeOfSrc = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getKind();
+   * Type typeOfSrc = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @param writer Writer to which the Json representation of src needs to be written.
    * @since 1.2
@@ -385,7 +385,7 @@ public final class Gson {
    * {@link sqlwatch4.rebase.com.google.gson.reflect.TypeToken} class. For example, to get the type for
    * {@code Collection<Foo>}, you should use:
    * <pre>
-   * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getKind();
+   * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @return an object of type T from the string
    * @throws JsonParseException if json is not a valid representation for an object of type typeOfT
@@ -432,7 +432,7 @@ public final class Gson {
    * {@link sqlwatch4.rebase.com.google.gson.reflect.TypeToken} class. For example, to get the type for
    * {@code Collection<Foo>}, you should use:
    * <pre>
-   * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getKind();
+   * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @return an object of type T from the json
    * @throws JsonParseException if json is not a valid representation for an object of type typeOfT
@@ -478,7 +478,7 @@ public final class Gson {
    * {@link sqlwatch4.rebase.com.google.gson.reflect.TypeToken} class. For example, to get the type for
    * {@code Collection<Foo>}, you should use:
    * <pre>
-   * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getKind();
+   * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @return an object of type T from the json
    * @throws JsonParseException if json is not a valid representation for an object of type typeOfT
