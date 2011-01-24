@@ -74,8 +74,12 @@ public class UIModel {
 
     private void updateStat() {
         Map<StatByTable, StatByTable> statSet = new HashMap<StatByTable, StatByTable>();
+        long globalTotalDuration=0;
+        int globalTotalCount=0;
         for (UITrace trace : traces) {
             if (trace.getKind() == Trace.Kind.SqlTiming) {
+                globalTotalCount++;
+                globalTotalDuration+=trace.getExecTime();
                 StatByTable stat = new StatByTable(trace);
                 StatByTable alrady = statSet.get(stat);
                 if (alrady != null) {
@@ -89,6 +93,8 @@ public class UIModel {
         Collections.sort(statList);
         statByTableList.clear();
         for (StatByTable stat : statList) {
+            stat.setGlobalTotalCount(globalTotalCount);
+            stat.setGlobalTotalDuration(globalTotalDuration);
             statByTableList.add(stat);
         }
     }

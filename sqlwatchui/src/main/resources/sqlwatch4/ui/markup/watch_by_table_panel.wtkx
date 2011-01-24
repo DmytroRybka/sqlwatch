@@ -20,39 +20,30 @@
                         <content>
                             <ScrollPane>
                                 <view>
-                                    <TableView wtkx:id="tableView">
+                                    <TableView wtkx:id="tableViewStatByTable">
                                         <columns>
-                                            <TableView.Column name="timepoint" width="180" headerData="When"/>
-                                            <TableView.Column name="gold" width="60" headerData="Gold"/>
-                                            <TableView.Column name="silver" width="60" headerData="Silver"/>
-                                            <TableView.Column name="bronze" width="60" headerData="Bronze"/>
-                                            <TableView.Column name="total" width="60" headerData="Total"/>
+                                            <TableView.Column name="queryType" width="60" headerData="Type"/>
+                                            <TableView.Column name="baseTable" width="100" headerData="Table"/>
+                                            <TableView.Column name="requestsCount" width="60" headerData="Requests"/>
+                                            <TableView.Column name="requestCountOfTotalPercentStr" width="60"
+                                                              headerData="of Total"/>
+                                            <TableView.Column name="uniqueRequestsCount" width="60"
+                                                              headerData="Unique Requests"/>
+                                            <TableView.Column name="uselessSqlPercentStr" width="60"
+                                                              headerData="Useless"/>
+                                            <TableView.Column name="uniqueStructureRequestsCount" width="60"
+                                                              headerData="(S1) Structurally Unique"/>
+                                            <TableView.Column name="uselessStructureSqlPercentStr" width="60"
+                                                              headerData="(SU) Structurally Useless"/>
+                                            <TableView.Column name="durationMs" width="60" headerData="Duration"/>
+                                            <TableView.Column name="durationPercentStr" width="60"
+                                                              headerData="of Total"/>
                                         </columns>
-
-                                        <!-- Source: http://en.wikipedia.org/wiki/2008_Summer_Olympics_medal_table -->
-                                        <tableData xmlns="org.apache.pivot.collections">
-                                            <ArrayList>
-                                                <HashMap nation="China" gold="51" silver="21" bronze="28" total="100"/>
-                                                <HashMap nation="United States" gold="36" silver="38" bronze="36"
-                                                         total="110"/>
-                                                <HashMap nation="Russia" gold="23" silver="21" bronze="28" total="72"/>
-                                                <HashMap nation="Great Britain" gold="19" silver="13" bronze="15"
-                                                         total="47"/>
-                                                <HashMap nation="Germany" gold="16" silver="10" bronze="15" total="41"/>
-                                                <HashMap nation="Australia" gold="14" silver="15" bronze="17"
-                                                         total="46"/>
-                                                <HashMap nation="South Korea" gold="13" silver="10" bronze="8"
-                                                         total="31"/>
-                                                <HashMap nation="Japan" gold="9" silver="6" bronze="11" total="26"/>
-                                                <HashMap nation="Italy" gold="8" silver="10" bronze="10" total="28"/>
-                                                <HashMap nation="France" gold="7" silver="16" bronze="17" total="40"/>
-                                            </ArrayList>
-                                        </tableData>
                                     </TableView>
                                 </view>
 
                                 <columnHeader>
-                                    <TableViewHeader tableView="$tableView"/>
+                                    <TableViewHeader tableView="$tableViewStatByTable"/>
                                 </columnHeader>
                             </ScrollPane>
 
@@ -62,7 +53,15 @@
                 <bottom>
                     <Border styles="{padding:6}">
                         <content>
-                            <Label text="Bottom"/>
+                            <ScrollPane horizontalScrollBarPolicy="fill_to_capacity"
+                                    verticalScrollBarPolicy="fill_to_capacity"
+                                    preferredHeight="240">
+                                <view>
+                                    <TextArea styles="{font:{size:9, bold:false}}"
+                                              text="SELECT * FROM duo;"
+                                              wtkx:id="textAreaStatByTable"/>
+                                </view>
+                            </ScrollPane>
                         </content>
                     </Border>
                 </bottom>

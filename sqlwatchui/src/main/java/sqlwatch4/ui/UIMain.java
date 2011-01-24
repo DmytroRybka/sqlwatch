@@ -2,6 +2,7 @@ package sqlwatch4.ui;
 
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.collections.Sequence;
 import org.apache.pivot.serialization.SerializationException;
@@ -15,13 +16,16 @@ import org.apache.pivot.wtkx.WTKX;
 import org.apache.pivot.wtkx.WTKXSerializer;
 import org.hibernate.pretty.Formatter;
 import sqlwatch4.rebase.com.google.gson.Gson;
+import sqlwatch4.ui.model.StatByTable;
 import sqlwatch4.ui.model.UIModel;
 import sqlwatch4.ui.model.UITrace;
 import sqlwatch4.ui.model.UITracesSlice;
+import sqlwatch4.ui.adapters.TableSelectionListenerAggregator;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author dmitry.mamonov
@@ -39,6 +43,12 @@ public class UIMain implements Application {
 
     @WTKX
     protected TextArea textAreaQueryDetails;
+
+    @WTKX
+    protected TableView tableViewStatByTable;
+
+    @WTKX
+    protected TextArea textAreaStatByTable;
 
     @Override
     public void startup(Display display, Map<String, String> properties) throws Exception {
@@ -81,54 +91,75 @@ public class UIMain implements Application {
                     });
                 }
                 {
-                    WTKXSerializer wtkxWatch = wtkxRoot.getSerializer("watch_list");
+                    WTKXSerializer wtkxWatchList = wtkxRoot.getSerializer("watch_list");
                     {
-                        WTKXSerializer wtkx = wtkxWatch.getSerializer("watch_plain_panel");
+                        WTKXSerializer wtkx = wtkxWatchList.getSerializer("watch_plain_panel");
                         wtkx.bind(this);
                         {
                             WTKXSerializer wtkxDetails = wtkx.getSerializer("query_details");
                             wtkxDetails.bind(this);
                         }
                         tableViewPlain.setTableData(model.getTraces());
-                        tableViewPlain.getTableViewSelectionListeners().add(new TableViewSelectionListener.Adapter() {
+                        tableViewPlain.getTableViewSelectionListeners().add(new TableSelectionListenerAggregator() {
                             @Override
-                            public void selectedRangeAdded(TableView tableView, int rangeStart, int rangeEnd) {
-                                processSelected(tableView);
-                            }
-
-                            @Override
-                            public void selectedRangeRemoved(TableView tableView, int rangeStart, int rangeEnd) {
-                                processSelected(tableView);
-                            }
-
-                            @Override
-                            public void selectedRangesChanged(TableView tableView, Sequence<Span> previousSelectedRanges) {
-                                processSelected(tableView);
-                            }
-
-                            private void processSelected(TableView tableView) {
+                            protected void onSelect(TableView tableView) {
                                 //TODO: (x-pivot) it looks like selection is not properly dropped all the time.
                                 UITrace selectedTrace = (UITrace) tableView.getSelectedRow();
-                                System.out.println("SELECTED COUND: "+tableView.getSelectedRows().getLength());
+                                System.out.println("SELECTED COUND: " + tableView.getSelectedRows().getLength());
                                 String sql = selectedTrace != null ? String.valueOf(selectedTrace.getSql()) : "-- not selected.";
                                 Formatter f = new Formatter(sql);
                                 f.setInitialString("");
                                 f.setIndentString("  ");
                                 String formattedSql = f.format();
-                                if (selectedTrace.getStackTrace()!=null){
+                                if (selectedTrace.getStackTrace() != null) {
                                     StringBuilder myLines = new StringBuilder();
-                                    for(String line:selectedTrace.getStackTrace().split("\n")){
+                                    for (String line : selectedTrace.getStackTrace().split("\n")) {
                                         String trimLine = line.trim();
-                                        if (trimLine.startsWith("at com.muranosoft")){
-                                            myLines.append(trimLine+"\n");
+                                        if (trimLine.startsWith("at com.muranosoft")) {
+                                            myLines.append(trimLine + "\n");
                                         }
                                     }
-                                    if (myLines.length()>0){
-                                        formattedSql+="\n\n"+myLines.toString();
+                                    if (myLines.length() > 0) {
+                                        formattedSql += "\n\n" + myLines.toString();
                                     }
-                                    formattedSql+="\n\n"+selectedTrace.getStackTrace();
+                                    formattedSql += "\n\n" + selectedTrace.getStackTrace();
                                 }
                                 textAreaQueryDetails.setText(formattedSql);
+                            }
+
+                        });
+                    }
+                    {
+                        WTKXSerializer wtkxByTable = wtkxWatchList.getSerializer("watch_by_table_panel");
+                        wtkxByTable.bind(this);
+                        tableViewStatByTable.setTableData(model.getStatByTableList());
+                        tableViewStatByTable.getTableViewSelectionListeners().add(new TableSelectionListenerAggregator() {
+                            @Override
+                            protected void onSelect(TableView tableView) {
+                                String rule = StringUtils.repeat("-",100);
+                                StringBuilder report = new StringBuilder();
+                                StatByTable stat = (StatByTable) tableView.getSelectedRow();
+                                if (stat!=null){
+                                    report.append(rule).append("\n");
+                                    report.append("Structurally Unique Requests:\n");
+                                    for(java.util.Map.Entry<String, AtomicInteger> sqlToCount:stat.getUniqueStructureSql().entrySet()){
+                                        report.append("  ")
+                                                .append(sqlToCount.getValue().intValue())
+                                                .append(" => ")
+                                                .append(sqlToCount.getKey().replaceAll("[\r\n]+", " ")).append("\n");
+                                    }
+                                    report.append("\n");
+                                    report.append(rule).append("\n");
+                                    report.append("Exactly Unique Requests:\n");
+                                    for(java.util.Map.Entry<String, AtomicInteger> sqlToCount:stat.getUniqueSql().entrySet()){
+                                        report.append("  ")
+                                                .append(sqlToCount.getValue().intValue())
+                                                .append(" => ")
+                                                .append(sqlToCount.getKey().replaceAll("[\r\n]+"," ")).append("\n");
+                                    }
+                                    report.append(rule).append("\n");
+                                }
+                                textAreaStatByTable.setText(report.toString());
                             }
                         });
                     }
