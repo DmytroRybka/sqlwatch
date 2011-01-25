@@ -11,6 +11,7 @@ import org.apache.pivot.util.concurrent.Task;
 import org.apache.pivot.util.concurrent.TaskExecutionException;
 import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.web.GetQuery;
+import org.apache.pivot.web.QueryException;
 import org.apache.pivot.wtk.*;
 import org.apache.pivot.wtkx.WTKX;
 import org.apache.pivot.wtkx.WTKXSerializer;
@@ -254,8 +255,10 @@ class RecurrentTask extends Task<Integer> {
             //System.out.println(new Gson().toJson(tracesSlice));
             model.insert(tracesSlice.getTraces());
             return tracesSlice.getTraces().size();
-        } catch (Exception e) {
+        } catch(QueryException e){
             System.out.println("Failed: " + e.getMessage());
+            throw new TaskExecutionException(e);
+        } catch (Exception e) {
             e.printStackTrace();
             throw new TaskExecutionException(e);
         }
