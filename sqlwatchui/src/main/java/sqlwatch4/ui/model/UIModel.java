@@ -1,5 +1,6 @@
 package sqlwatch4.ui.model;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.internal.Preconditions;
 import org.apache.pivot.collections.*;
 import sqlwatch4.model.Trace;
@@ -21,9 +22,10 @@ public class UIModel {
     org.apache.pivot.collections.List<UISlice> slices = new org.apache.pivot.collections.ArrayList<UISlice>();
     org.apache.pivot.collections.List<UITrace> traces = new org.apache.pivot.collections.ArrayList<UITrace>();
     org.apache.pivot.collections.List<StatByTable> statByTableList = new org.apache.pivot.collections.ArrayList<StatByTable>();
+    org.apache.pivot.collections.List<StatByTransaction> statByTransactionList = new org.apache.pivot.collections.ArrayList<StatByTransaction>();
     Set<UISlice> selectedSlices = new LinkedHashSet<UISlice>();
 
-    public void clear(){
+    public void clear() {
         slices.clear();
         traces.clear();
         selectedSlices.clear();
@@ -40,6 +42,10 @@ public class UIModel {
 
     public org.apache.pivot.collections.List<StatByTable> getStatByTableList() {
         return statByTableList;
+    }
+
+    public org.apache.pivot.collections.List<StatByTransaction> getStatByTransactionList() {
+        return statByTransactionList;
     }
 
     public void setSelectedSlices(Sequence<UISlice> nowSelectedSlices) {
@@ -73,13 +79,18 @@ public class UIModel {
     }
 
     private void updateStat() {
+        updateStatByTable();
+        updateStatByTransaction();
+    }
+
+    private void updateStatByTable() {
         Map<StatByTable, StatByTable> statSet = new HashMap<StatByTable, StatByTable>();
-        long globalTotalDuration=0;
-        int globalTotalCount=0;
+        long globalTotalDuration = 0;
+        int globalTotalCount = 0;
         for (UITrace trace : traces) {
             if (trace.getKind() == Trace.Kind.SqlTiming) {
                 globalTotalCount++;
-                globalTotalDuration+=trace.getExecTime();
+                globalTotalDuration += trace.getExecTime();
                 StatByTable stat = new StatByTable(trace);
                 StatByTable alrady = statSet.get(stat);
                 if (alrady != null) {
@@ -98,6 +109,34 @@ public class UIModel {
             statByTableList.add(stat);
         }
     }
+
+    private void updateStatByTransaction() {
+        Set<String> transactionEndingSet = ImmutableSet.of("commit()","rollback()","ConnectionClosed");
+        statByTransactionList.clear();
+        Map<TransactionKey, StatByTransaction> pendingTransactions = new HashMap<TransactionKey, StatByTransaction>();
+        for (UITrace trace : traces) {
+            if (trace.getKind()== Trace.Kind.SqlTiming){
+                TransactionKey key = new TransactionKey(trace);
+                StatByTransaction stat = pendingTransactions.get(key);
+                if (stat!=null){
+                    stat.add(trace);
+                } else {
+                    stat = new StatByTransaction(trace);
+                    statByTransactionList.add(stat);
+                    pendingTransactions.put(key, stat);
+                }
+            } else if (trace.getKind()== Trace.Kind.MethodReturned){
+                if (transactionEndingSet.contains(trace.getMethodCall())){
+                    TransactionKey key = new TransactionKey(trace);
+                    StatByTransaction stat = pendingTransactions.remove(key);
+                    if (stat!=null){
+                        stat.add(trace);
+                    }
+                }
+            }
+        }
+    }
+
 
     public class UISlice {
         boolean selected = false;

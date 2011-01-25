@@ -32,20 +32,7 @@
             </columns>
             <rows>
                 <TablePane.Row height="1*">
-                    <Label text="1"/>
-                    <!--<wtkx:include src="watch_by_table_panel.wtkx"/>-->
-                </TablePane.Row>
-            </rows>
-        </TablePane>
-
-        <TablePane TabPane.label="Group By Query">
-            <columns>
-                <TablePane.Column width="1*"/>
-            </columns>
-            <rows>
-                <TablePane.Row height="1*">
-                    <Label text="2"/>
-                    <!--<wtkx:include src="watch_by_table_panel.wtkx"/>-->
+                    <wtkx:include src="watch_by_transaction_panel.wtkx" wtkx:id="watch_by_transaction_panel"/>
                 </TablePane.Row>
             </rows>
         </TablePane>

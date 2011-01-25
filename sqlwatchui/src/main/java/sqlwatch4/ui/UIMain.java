@@ -17,10 +17,7 @@ import org.apache.pivot.wtkx.WTKX;
 import org.apache.pivot.wtkx.WTKXSerializer;
 import org.hibernate.pretty.Formatter;
 import sqlwatch4.rebase.com.google.gson.Gson;
-import sqlwatch4.ui.model.StatByTable;
-import sqlwatch4.ui.model.UIModel;
-import sqlwatch4.ui.model.UITrace;
-import sqlwatch4.ui.model.UITracesSlice;
+import sqlwatch4.ui.model.*;
 import sqlwatch4.ui.adapters.TableSelectionListenerAggregator;
 
 import java.io.IOException;
@@ -50,6 +47,13 @@ public class UIMain implements Application {
 
     @WTKX
     protected TextArea textAreaStatByTable;
+
+    @WTKX
+    protected TableView tableViewStatByTransaction;
+
+    @WTKX
+    protected TextArea textAreaStatByTransaction;
+
 
     @Override
     public void startup(Display display, Map<String, String> properties) throws Exception {
@@ -137,13 +141,13 @@ public class UIMain implements Application {
                         tableViewStatByTable.getTableViewSelectionListeners().add(new TableSelectionListenerAggregator() {
                             @Override
                             protected void onSelect(TableView tableView) {
-                                String rule = StringUtils.repeat("-",100);
+                                String rule = StringUtils.repeat("-", 100);
                                 StringBuilder report = new StringBuilder();
                                 StatByTable stat = (StatByTable) tableView.getSelectedRow();
-                                if (stat!=null){
+                                if (stat != null) {
                                     report.append(rule).append("\n");
                                     report.append("Structurally Unique Requests:\n");
-                                    for(java.util.Map.Entry<String, AtomicInteger> sqlToCount:stat.getUniqueStructureSql().entrySet()){
+                                    for (java.util.Map.Entry<String, AtomicInteger> sqlToCount : stat.getUniqueStructureSql().entrySet()) {
                                         report.append("  ")
                                                 .append(sqlToCount.getValue().intValue())
                                                 .append(" => ")
@@ -152,15 +156,33 @@ public class UIMain implements Application {
                                     report.append("\n");
                                     report.append(rule).append("\n");
                                     report.append("Exactly Unique Requests:\n");
-                                    for(java.util.Map.Entry<String, AtomicInteger> sqlToCount:stat.getUniqueSql().entrySet()){
+                                    for (java.util.Map.Entry<String, AtomicInteger> sqlToCount : stat.getUniqueSql().entrySet()) {
                                         report.append("  ")
                                                 .append(sqlToCount.getValue().intValue())
                                                 .append(" => ")
-                                                .append(sqlToCount.getKey().replaceAll("[\r\n]+"," ")).append("\n");
+                                                .append(sqlToCount.getKey().replaceAll("[\r\n]+", " ")).append("\n");
                                     }
                                     report.append(rule).append("\n");
                                 }
                                 textAreaStatByTable.setText(report.toString());
+                            }
+                        });
+                    }
+                    {
+                        WTKXSerializer wtkx = wtkxWatchList.getSerializer("watch_by_transaction_panel");
+                        wtkx.bind(this);
+                        tableViewStatByTransaction.setTableData(model.getStatByTransactionList());
+                        tableViewStatByTransaction.getTableViewSelectionListeners().add(new TableSelectionListenerAggregator() {
+                            @Override
+                            protected void onSelect(TableView tableView) {
+                                StringBuilder report = new StringBuilder();
+                                StatByTransaction stat = (StatByTransaction) tableView.getSelectedRow();
+                                if (stat != null) {
+                                    for (UITrace trace : stat.getTraces()) {
+                                        report.append(trace.getQueryOrCommand().replaceAll("[\r\n]+", " ")).append("\n");
+                                    }
+                                }
+                                textAreaStatByTransaction.setText(report.toString());
                             }
                         });
                     }
@@ -255,7 +277,7 @@ class RecurrentTask extends Task<Integer> {
             //System.out.println(new Gson().toJson(tracesSlice));
             model.insert(tracesSlice.getTraces());
             return tracesSlice.getTraces().size();
-        } catch(QueryException e){
+        } catch (QueryException e) {
             System.out.println("Failed: " + e.getMessage());
             throw new TaskExecutionException(e);
         } catch (Exception e) {
