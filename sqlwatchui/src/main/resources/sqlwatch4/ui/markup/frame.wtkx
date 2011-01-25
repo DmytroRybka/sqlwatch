@@ -1,4 +1,4 @@
-<Frame title="Menu Bars" maximized="true"
+<Frame title="SQL Watch 4.0 Preview: Speaking Truth" maximized="true"
        styles="{padding:{top:0, left:4, bottom:4, right:4}, showWindowControls:false}"
        xmlns:wtkx="http://pivot.apache.org/wtkx"
        xmlns:content="org.apache.pivot.wtk.content"

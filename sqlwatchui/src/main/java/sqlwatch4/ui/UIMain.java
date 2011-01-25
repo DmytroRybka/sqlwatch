@@ -55,7 +55,7 @@ public class UIMain implements Application {
     public void startup(Display display, Map<String, String> properties) throws Exception {
         try {
             WTKXSerializer wtkxSerializer = new WTKXSerializer();
-            window = (Window) wtkxSerializer.readObject(this, "./markup/frame.wtkx");
+            window = (Window) wtkxSerializer.readObject(this, "markup/frame.wtkx");
             {
                 WTKXSerializer wtkxRoot = wtkxSerializer.getSerializer("root_panel");
                 {
@@ -116,7 +116,7 @@ public class UIMain implements Application {
                                     StringBuilder myLines = new StringBuilder();
                                     for (String line : selectedTrace.getStackTrace().split("\n")) {
                                         String trimLine = line.trim();
-                                        if (trimLine.startsWith("at com.muranosoft")) {
+                                        if (trimLine.startsWith("at com.m")) {
                                             myLines.append(trimLine + "\n");
                                         }
                                     }
