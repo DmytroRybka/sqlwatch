@@ -1,13 +1,12 @@
 package sqlwatch4.ui.model;
 
+import com.google.common.base.Joiner;
 import com.google.inject.internal.Preconditions;
 import sqlwatch4.model.Trace;
 import sqlwatch4.ui.adapters.CountingMap;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author dmitry.mamonov
@@ -27,7 +26,7 @@ public class StatByTable implements Comparable<StatByTable> {
         Preconditions.checkArgument(trace.getKind() == Trace.Kind.SqlTiming);
         final String[] sqlSplit = trace.getSql().trim().toLowerCase().split("\\s");
         this.queryType = extractQueryType(sqlSplit);
-        this.baseTable = extractBaseTable(sqlSplit);
+        this.baseTable = extractBaseTable(queryType, sqlSplit);
         this.totalDuration = trace.getExecTime();
         this.traces.add(trace);
         this.uniqueSql.put(trace.getSql());
@@ -76,11 +75,23 @@ public class StatByTable implements Comparable<StatByTable> {
         return uniqueStructureSql;
     }
 
-    private String extractBaseTable(String[] sqlSplit) {
+    private String extractBaseTable(String queryType, String[] sqlSplit) {
+        if (sqlSplit.length==2 && sqlSplit[0].equals("select")){
+            return Joiner.on(" ").join(sqlSplit);
+        }
         for (int i = 0; i < sqlSplit.length - 1; i++) {
             String sqlItem = sqlSplit[i];
             if ("from".equals(sqlItem) || "into".equals(sqlItem) || "update".equals(sqlItem)) {
-                return sqlSplit[i + 1].replaceAll("[(]].*","()");
+                String result = sqlSplit[i + 1];
+                if (result.startsWith("(")){
+                    return result;
+                } else {
+                    String replace="";
+                    if (queryType.equals("select")){
+                        replace="()";
+                    }
+                    return result.replaceAll("[(].*",replace);
+                }
             }
         }
         return "Unknown";
