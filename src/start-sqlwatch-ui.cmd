@@ -1,1 +1,1 @@
-start java -cp "lib/*" sqlwatch4.ui.UIMain.java
+start java -cp "lib/*" sqlwatch4.ui.UIMain
