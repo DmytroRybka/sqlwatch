@@ -1,0 +1,7 @@
+syntax: regexp
+sqlwatchdemo/target/.+
+sqlwatchdriver/target/.+
+sqlwatchui/target/.+
+target/.+
+\.idea/.+
+derby\.log

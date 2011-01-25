@@ -1,0 +1,1 @@
+start java -cp "lib/*" sqlwatch4.ui.UIMain

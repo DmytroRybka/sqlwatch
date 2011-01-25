@@ -1,0 +1,15 @@
+<SplitPane
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns="org.apache.pivot.wtk"
+        wtkx:id="splitPane"
+        orientation="horizontal"
+        preferredWidth="800"
+        preferredHeight="600"
+        splitRatio="0.2">
+    <left>
+        <wtkx:include src="sessions_list.wtkx" wtkx:id="sessions_list"/>
+    </left>
+    <right>
+        <wtkx:include src="watch_list.wtkx" wtkx:id="watch_list"/>
+    </right>
+</SplitPane>

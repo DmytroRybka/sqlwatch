@@ -1,0 +1,62 @@
+<TablePane
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns="org.apache.pivot.wtk"
+        wtkx:id="tablePane" styles="{
+                    verticalSpacing:1,
+                    showHorizontalGridLines:false,
+                    horizontalSpacing:1,
+                    showVerticalGridLines:true}">
+    <columns>
+        <TablePane.Column width="1*"/>
+    </columns>
+    <rows>
+        <TablePane.Row height="-1">
+            <Label text="Header"/>
+        </TablePane.Row>
+        <TablePane.Row height="1*">
+            <SplitPane wtkx:id="splitPane" orientation="vertical" splitRatio="0.6" preferredHeight="600">
+                <top>
+                    <Border styles="{padding:6}">
+                        <content>
+                            <ScrollPane>
+                                <view>
+                                    <TableView wtkx:id="tableViewStatByTransaction">
+                                        <columns>
+                                            <TableView.Column name="thread" width="60" headerData="Thread"/>
+                                            <TableView.Column name="connectionNumber" width="60" headerData="Connection"/>
+                                            <TableView.Column name="startTimeStr" width="100" headerData="Start Time"/>
+                                            <TableView.Column name="finishTimeStr" width="100" headerData="Finish Time"/>
+                                            <TableView.Column name="totalDurationStr" width="60" headerData="Duration"/>
+                                            <TableView.Column name="queriesCount" width="90" headerData="Queries Count"/>
+                                            <TableView.Column name="resolution" width="90" headerData="Resolution"/>
+                                        </columns>
+                                    </TableView>
+                                </view>
+
+                                <columnHeader>
+                                    <TableViewHeader tableView="$tableViewStatByTransaction"/>
+                                </columnHeader>
+                            </ScrollPane>
+
+                        </content>
+                    </Border>
+                </top>
+                <bottom>
+                    <Border styles="{padding:6}">
+                        <content>
+                            <ScrollPane horizontalScrollBarPolicy="fill_to_capacity"
+                                    verticalScrollBarPolicy="fill_to_capacity"
+                                    preferredHeight="240">
+                                <view>
+                                    <TextArea styles="{font:{size:9, bold:false}}"
+                                              text="SELECT * FROM duo;"
+                                              wtkx:id="textAreaStatByTransaction"/>
+                                </view>
+                            </ScrollPane>
+                        </content>
+                    </Border>
+                </bottom>
+            </SplitPane>
+        </TablePane.Row>
+    </rows>
+</TablePane>

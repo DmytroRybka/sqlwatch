@@ -1,0 +1,71 @@
+<TablePane
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns="org.apache.pivot.wtk"
+        wtkx:id="tablePane" styles="{
+                    verticalSpacing:1,
+                    showHorizontalGridLines:false,
+                    horizontalSpacing:1,
+                    showVerticalGridLines:true}">
+    <columns>
+        <TablePane.Column width="1*"/>
+    </columns>
+    <rows>
+        <TablePane.Row height="-1">
+            <Label text="Header"/>
+        </TablePane.Row>
+        <TablePane.Row height="1*">
+            <SplitPane wtkx:id="splitPane" orientation="vertical" splitRatio="0.6" preferredHeight="600">
+                <top>
+                    <Border styles="{padding:6}">
+                        <content>
+                            <ScrollPane>
+                                <view>
+                                    <TableView wtkx:id="tableViewStatByTable">
+                                        <columns>
+                                            <TableView.Column name="queryType" width="60" headerData="Type"/>
+                                            <TableView.Column name="baseTable" width="160" headerData="Table"/>
+                                            <TableView.Column name="requestsCount" width="60" headerData="Requests"/>
+                                            <TableView.Column name="requestCountOfTotalPercentStr" width="60"
+                                                              headerData="of Total"/>
+                                            <TableView.Column name="uniqueRequestsCount" width="60"
+                                                              headerData="Unique Requests"/>
+                                            <TableView.Column name="uselessSqlPercentStr" width="60"
+                                                              headerData="Useless"/>
+                                            <TableView.Column name="uniqueStructureRequestsCount" width="60"
+                                                              headerData="(S1) Structurally Unique"/>
+                                            <TableView.Column name="uselessStructureSqlPercentStr" width="60"
+                                                              headerData="(SU) Structurally Useless"/>
+                                            <TableView.Column name="durationMs" width="60" headerData="Duration"/>
+                                            <TableView.Column name="durationPercentStr" width="60"
+                                                              headerData="of Total"/>
+                                        </columns>
+                                    </TableView>
+                                </view>
+
+                                <columnHeader>
+                                    <TableViewHeader tableView="$tableViewStatByTable"/>
+                                </columnHeader>
+                            </ScrollPane>
+
+                        </content>
+                    </Border>
+                </top>
+                <bottom>
+                    <Border styles="{padding:6}">
+                        <content>
+                            <ScrollPane horizontalScrollBarPolicy="fill_to_capacity"
+                                    verticalScrollBarPolicy="fill_to_capacity"
+                                    preferredHeight="240">
+                                <view>
+                                    <TextArea styles="{font:{size:9, bold:false}}"
+                                              text="SELECT * FROM duo;"
+                                              wtkx:id="textAreaStatByTable"/>
+                                </view>
+                            </ScrollPane>
+                        </content>
+                    </Border>
+                </bottom>
+            </SplitPane>
+        </TablePane.Row>
+    </rows>
+</TablePane>

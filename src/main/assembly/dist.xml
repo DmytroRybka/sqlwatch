@@ -1,0 +1,26 @@
+<assembly>
+    <id>preview</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>src</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>README*</include>
+                <include>LICENSE*</include>
+                <include>NOTICE*</include>
+                <include>*.cmd</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <excludes>
+                <exclude>junit:junit</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+</assembly>

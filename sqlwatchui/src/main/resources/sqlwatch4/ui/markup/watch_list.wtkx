@@ -1,0 +1,46 @@
+<TabPane
+        xmlns:wtkx="http://pivot.apache.org/wtkx"
+        xmlns="org.apache.pivot.wtk"
+        wtkx:id="tabPane"
+       >
+    <tabs>
+        <TablePane TabPane.label="Plain View">
+            <columns>
+                <TablePane.Column width="1*"/>
+            </columns>
+            <rows>
+                <TablePane.Row height="1*">
+                    <wtkx:include src="watch_plain_panel.wtkx" wtkx:id="watch_plain_panel"/>
+                </TablePane.Row>
+            </rows>
+        </TablePane>
+
+        <TablePane TabPane.label="Group By Table">
+            <columns>
+                <TablePane.Column width="1*"/>
+            </columns>
+            <rows>
+                <TablePane.Row height="1*">
+                    <wtkx:include src="watch_by_table_panel.wtkx" wtkx:id="watch_by_table_panel"/>
+                </TablePane.Row>
+            </rows>
+        </TablePane>
+
+        <TablePane TabPane.label="Group By Transaction">
+            <columns>
+                <TablePane.Column width="1*"/>
+            </columns>
+            <rows>
+                <TablePane.Row height="1*">
+                    <wtkx:include src="watch_by_transaction_panel.wtkx" wtkx:id="watch_by_transaction_panel"/>
+                </TablePane.Row>
+            </rows>
+        </TablePane>
+    </tabs>
+    <corner>
+        <BoxPane wtkx:id="cornerBoxPane" styles="{horizontalAlignment:'right'}">
+            <TextInput prompt="Full text filter"/>
+        </BoxPane>
+    </corner>
+</TabPane>
+
