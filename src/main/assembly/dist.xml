@@ -18,8 +18,6 @@
     <dependencySets>
         <dependencySet>
             <outputDirectory>/lib</outputDirectory>
-            <unpack>false</unpack>
-            <scope>runtime</scope>
             <excludes>
                 <exclude>junit:junit</exclude>
             </excludes>
